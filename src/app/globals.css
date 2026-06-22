@@ -63,6 +63,10 @@
   --shadow-glow-cyan: 0 0 20px rgba(34, 211, 238, 0.3);
   --shadow-glow-emerald: 0 0 20px rgba(16, 185, 129, 0.3);
 
+  /* 3D Shadows */
+  --shadow-3d: inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(99,102,241,0.1);
+  --shadow-3d-hover: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.9), 0 0 40px rgba(99,102,241,0.3);
+
   /* Spacing */
   --sidebar-width: 260px;
   --sidebar-collapsed: 72px;
@@ -209,14 +213,36 @@ h4 { font-size: 1.125rem; }
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-3d);
+  transition: all var(--transition-spring);
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+  pointer-events: none;
 }
 
 .glass-card:hover {
   background: var(--glass-bg-hover);
-  border-color: var(--border-default);
-  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-3d-hover);
+  transform: translateY(-8px) scale(1.02) rotateX(4deg) rotateY(-2deg);
+}
+
+.glass-card:hover::before {
+  left: 150%;
 }
 
 .glass-card-static {
@@ -244,12 +270,14 @@ h4 { font-size: 1.125rem; }
 .btn-primary {
   background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   color: white;
-  box-shadow: var(--shadow-glow-primary);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 12px rgba(0,0,0,0.4), var(--shadow-glow-primary);
+  transform: translateZ(10px);
+  transition: all var(--transition-spring);
 }
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
-  transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.45);
+  transform: translateY(-4px) translateZ(20px) scale(1.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 12px 24px rgba(0,0,0,0.6), 0 0 40px rgba(99, 102, 241, 0.6);
 }
 
 .btn-secondary {
@@ -471,6 +499,7 @@ tr:last-child td {
   padding: 24px 32px;
   max-width: 1400px;
   margin: 0 auto;
+  perspective: 2000px;
 }
 
 .page-header {
