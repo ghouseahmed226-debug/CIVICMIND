@@ -46,6 +46,57 @@ export default function AnalyticsPage() {
     { id: 'energy', label: 'Energy', icon: TrendingUp },
   ];
 
+  const getTrendsData = () => {
+    const domainData = analyticsTimeSeriesData?.[activeDomain];
+    if (!domainData) return trafficTrendData;
+    
+    const colors = ['#6366f1', '#22d3ee', '#f59e0b', '#10b981', '#ef4444'];
+    const datasets = Object.keys(domainData.metrics).map((key, i) => {
+      const metric = domainData.metrics[key];
+      return {
+        label: metric.label,
+        data: metric.data,
+        borderColor: colors[i % colors.length],
+        backgroundColor: colors[i % colors.length] + '1a',
+      };
+    });
+
+    return {
+      labels: domainData.labels,
+      datasets
+    };
+  };
+
+  const getPredictionsData = () => {
+    // We'll just show the energy demand forecast as an example
+    const pData = predictiveData.energyDemand;
+    return {
+      labels: pData.labels,
+      datasets: [
+        {
+          label: 'Upper Bound',
+          data: pData.upper,
+          borderColor: 'rgba(100,116,139,0.5)',
+          borderDash: [5, 5],
+          backgroundColor: 'transparent'
+        },
+        {
+          label: 'Predicted',
+          data: pData.predicted,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245,158,11,0.1)',
+        },
+        {
+          label: 'Lower Bound',
+          data: pData.lower,
+          borderColor: 'rgba(100,116,139,0.5)',
+          borderDash: [5, 5],
+          backgroundColor: 'transparent'
+        }
+      ]
+    };
+  };
+
   return (
     <div className="page-container animate-fade-in">
       <div className="page-header">
@@ -92,7 +143,7 @@ export default function AnalyticsPage() {
         <div className="animate-fade-in-up">
           <ChartCard title={`${activeDomain.charAt(0).toUpperCase() + activeDomain.slice(1)} Trends`}>
              <div style={{ height: '350px' }}>
-               <Line data={analyticsTimeSeriesData?.[activeDomain] || trafficTrendData} options={chartOptions} />
+               <Line data={getTrendsData()} options={chartOptions} />
              </div>
           </ChartCard>
         </div>
@@ -102,7 +153,7 @@ export default function AnalyticsPage() {
         <div className="animate-fade-in-up">
            <ChartCard title="7-Day Forecast with Confidence Intervals">
              <div style={{ height: '350px' }}>
-               <Line data={predictiveData?.['energy'] || trafficTrendData} options={chartOptions} />
+               <Line data={getPredictionsData()} options={chartOptions} />
              </div>
            </ChartCard>
         </div>
